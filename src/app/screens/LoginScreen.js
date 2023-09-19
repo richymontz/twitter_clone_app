@@ -6,7 +6,8 @@ import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 import { TextField, Button } from '@mui/material';
 import styled from "styled-components"
 
-import { LOGIN } from '../graphql/auth'
+import { LOGIN } from '../graphql/mutators'
+import { setupSession } from '../utils/session'
 
 loadDevMessages();
 loadErrorMessages();
@@ -37,8 +38,7 @@ const LoginScreen = () => {
   const [password, setPassword] = React.useState("")
   const [setLogin, {data, loading, error}] = useMutation(LOGIN, {
     onCompleted: (data) => {
-      console.log('data', data)
-      localStorage.setItem('token', data.login.token)
+      setupSession(data.login)
       router.push(`/home`)
     },
     onError: (error) => {
