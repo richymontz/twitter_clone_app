@@ -1,16 +1,17 @@
 'use client';
 import * as React from 'react'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Avatar, Button, Typography, TextField } from '@mui/material';
+import { Avatar, Button, Typography, TextField, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import styled from "styled-components"
 
 import Sidebar from "../components/Sidebar"
 import MoreSection from "../components/MoreSection"
 import MainContent from "../components/MainContent"
+import Tweet from "../components/Tweet"
 
-import { CREATE_TWEET } from '../graphql/mutators'
+import { CREATE_TWEET, FEED } from '../graphql/mutators'
 
 const MAX_CHARS = 280
 
@@ -23,7 +24,7 @@ export const Title = styled.h1`
 export const Container = styled.main`
   display: flex;
   flex-direction: row;
-  height: 100vh;
+  height: 100%;
 `
 
 export const CreateTweetContainer = styled.div`
@@ -57,39 +58,24 @@ export const Tweets = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-`
-
-export const Tweet = styled.div`
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  flex-direction: row;
-  padding: 30px;
-`
-
-export const TweetContent = styled.div`
-  margin-left: 10px;
-`
-
-export const TweetHeader = styled.div`
-  font-size: 1.2em;
-`
-
-export const TweetBody = styled.div`
-  color: #ddd;
-  font-size: 1.2em;
-  word-break: break-word;
+  margin-bottom: 100px;
 `
 
 const HomeScreen = () => {
   const router = useRouter()
   const [newTweet, setNewTweet] = React.useState("")
 
+
+  const { data: feed, loading: loadingFeed, refetch: refetchFeed } = useQuery(FEED)
+
   const currentUser = JSON.parse(localStorage.getItem("user"))
-  const tweets = JSON.parse(localStorage.getItem("tweets"))
+  const tweets = React.useMemo(() => {
+    return currentUser && currentUser.relatedUsers ? currentUser.relatedUsers.map((user) => user.tweets).flat() : []
+  }, [currentUser])
 
   const [createTweet, {data, loading, error}] = useMutation(CREATE_TWEET, {
     onCompleted: (data) => {
-      localStorage.setItem("tweets", JSON.stringify([data.createTweet, ...tweets]))
+      refetchFeed()
       setNewTweet("")
     },
     onError: (error) => {
@@ -111,7 +97,7 @@ const HomeScreen = () => {
         body: newTweet
       }
     })
-  }, [])
+  }, [createTweet, newTweet])
 
   React.useEffect(() => {
     if (!localStorage.getItem("token") || localStorage.getItem("token") == "null") {
@@ -149,23 +135,15 @@ const HomeScreen = () => {
           </TweetContainer>
         </CreateTweetContainer>
         <Tweets>
-          {tweets.map((tweet, index) => {
+          {feed && feed.feed && feed.feed.map((tweet, index) => {
             return (
-              <Tweet>
-                <Avatar src={tweet.user.avatar} />
-                <TweetContent>
-                  <TweetHeader>
-                    <Link href={`/${tweet.user.username}`}><strong>{tweet.user.fullName}</strong>, @{tweet.user.username} - {tweet.dateTime}</Link>
-                  </TweetHeader>
-                  <TweetBody>{tweet.body}</TweetBody>
-                </TweetContent>
-              </Tweet>
+              <Tweet tweet={tweet} key={`tweet-${index}`}/>
             )
           })}
         </Tweets>
       </MainContent>
       <MoreSection>
-        More
+        
       </MoreSection>
     </Container>
   )

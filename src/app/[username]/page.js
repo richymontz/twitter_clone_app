@@ -1,8 +1,8 @@
-import ProfileScreen from '../screens/ProfileScreen'
+import UserScreen from '../screens/UserScreen'
 
 export default function Profile({ params }) {
   const { username } = params
   return (
-    <ProfileScreen username={username}/>
+    <UserScreen username={username}/>
   )
 }

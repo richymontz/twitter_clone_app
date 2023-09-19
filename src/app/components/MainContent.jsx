@@ -6,6 +6,7 @@ export const Container = styled.section`
   width: 600px;
   min-height: 100vh;
   margin-left: 500px;
+  height: 100%;
 `
 
 export default function MainContent({ children }) {

@@ -50,6 +50,14 @@ export default function Sidebar({ currentUser }) {
     router.push(`/${currentUser.username}`)
   }, [router])
 
+  const goToFollowing = React.useCallback(() => {
+    router.push(`/${currentUser.username}/following`)
+  }, [router])
+
+  const goToFollowers = React.useCallback(() => {
+    router.push(`/${currentUser.username}/followers`)
+  }, [router])
+
   return (
     <Container>
       <SidebarTop>
@@ -69,6 +77,22 @@ export default function Sidebar({ currentUser }) {
                 <Icon name="person" />
               </ListItemIcon>
               <ListItemText primary="Profile" variant="h4" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem>
+            <ListItemButton onClick={goToFollowers}>
+              <ListItemIcon>
+                <Icon name="people-group" />
+              </ListItemIcon>
+              <ListItemText primary={`Followers: ${currentUser.followerIds.length}`} variant="h3" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem>
+            <ListItemButton onClick={goToFollowing}>
+              <ListItemIcon>
+                <Icon name="person-burst" />
+              </ListItemIcon>
+              <ListItemText primary={`Following: ${currentUser.followingIds.length}`} variant="h3" />
             </ListItemButton>
           </ListItem>
         </List>
