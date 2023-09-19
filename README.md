@@ -17,3 +17,7 @@ npm run dev -- --port 3001
 ```
 
 Open [http://localhost:3001](http://localhost:3001) with your browser to see the application running.
+
+##NOTE
+
+You should run the rails app in port 3000
