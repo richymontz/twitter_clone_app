@@ -169,7 +169,7 @@ const UserScreen = ({ username }) => {
         <Title>
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Avatar src={viewingUser.avatar} style={{ marginRight: 20 }}/>
-            <UserName href={`/${user.username}`}>{user.fullName} (@{user.username})</UserName>
+            <UserName href={`/${viewingUser.username}`}>{viewingUser.fullName} (@{viewingUser.username})</UserName>
           </div>
           {data.userInfo.username != currentUser.username && (
             <Button disabled={followUserResponse.loading} onClick={toggleFollow} variant={userIsFollowed ? "outlined" : "contained"}>{userIsFollowed ? "Unfollow" : "Follow"}</Button>
